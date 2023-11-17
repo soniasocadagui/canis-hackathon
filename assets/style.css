@@ -1,0 +1,102 @@
+
+
+body {
+    background-color: #003459;
+    margin: 5%;
+}
+
+.card_container {
+    border-radius: 5px;
+    background-color: #8e9fbc;
+    margin: 20px;
+    padding: 15px;
+    position: relative;
+    box-shadow: 2px 2px 2px #8e9fbc;
+  }
+
+.create_container {
+    border-radius: 5px;
+    background-color: #8e9fbc;
+    margin: 14px;
+    padding: 20px;
+    position: relative;
+    box-shadow: 2px 2px 2px #8e9fbc;
+  }
+
+.option_container {
+    border-radius: 5px;
+    background-color: #8e9fbc;
+    margin: 8px;
+    padding: 20px;
+    position: relative;
+    box-shadow: 2px 2px 2px #8e9fbc;
+  }
+
+.dcc_compon {
+    margin: 0;
+    padding: 5px;
+    width: calc(100%-40px);
+  }
+
+.fix_label {
+    font-size: 20px;
+      margin: 0;
+      padding: 10px;
+      padding-bottom: 0px;
+      margin-bottom: 0px;
+      width: calc(100%-40px);
+    }
+#header{
+    align-items: center;
+}
+
+.flex-display{
+    display:flex;
+}
+
+#mainContainer{
+    display: flex;
+    flex-direction: column;
+}
+
+#title{
+    text-align: center;
+}
+
+.Select-control, .Select-menu-outer, .Select-multi-value-wrapper, .select-up, .is-open .Select-control {
+    background-color: whitesmoke;
+    color: #003459;
+  
+  }
+  
+  .Select-control{
+    border: 0.9px solid black;
+  }
+  
+  .has-value.Select--single>.Select-control .Select-value .Select-value-label, .has-value.is-pseudo-focused.Select--single>.Select-control .Select-value .Select-value-label {
+    color: #003459;
+  }
+
+/* width */
+::-webkit-scrollbar {
+    width: 10px !important;
+    display: block !important;
+  }
+  
+  /* Track */
+  ::-webkit-scrollbar-track {
+    background: whitesmoke !important;
+    border-radius: 10px !important;
+    display: block !important;
+  }
+  
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: #8e9fbc;
+  }
+  
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background: #8e9fbc !important;
+  }
+  
