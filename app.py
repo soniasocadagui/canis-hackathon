@@ -13,7 +13,7 @@ import os
 # Creating Data for my app
 
 # weatwaves
-disaster_path = "https://raw.githubusercontent.com/soniasocadagui/mdaheroku/main/data/disaster_data.xlsx"
+disaster_path = "https://raw.githubusercontent.com/soniasocadagui/canis-hackathon-app/main/data/disaster_data.xlsx"
 colslist = ['Year', 'Disaster Type','Disaster Subtype','Country','Start Month','Start Day','End Month','End Day']
 disaster_data = pd.read_excel(disaster_path, usecols = colslist)
 heatWaves_data = disaster_data[disaster_data['Disaster Subtype'] == 'Heat wave']
@@ -22,22 +22,22 @@ number_disasters = disaster_data[disaster_data['Disaster Type'] == 'Extreme temp
 
 
 # temperatures
-df_total = pd.read_csv("https://raw.githubusercontent.com/soniasocadagui/mdaheroku/main/data/data_total.csv", 
+df_total = pd.read_csv("https://raw.githubusercontent.com/soniasocadagui/canis-hackathon-app/main/data/data_total.csv", 
                            sep=",", low_memory=False)
 meanChange = df_total['max_temperature_change'].mean()
 
-weather_path = "https://raw.githubusercontent.com/soniasocadagui/mdaheroku/main/data/weather_data.csv"
+weather_path = "https://raw.githubusercontent.com/soniasocadagui/canis-hackathon-app/main/data/weather_data.csv"
 weather_data = pd.read_csv(weather_path, sep = ";")
 
 
 # maps
-url = "https://raw.githubusercontent.com/soniasocadagui/mdaheroku/main/data/low_res_custom.geo.json"
+url = "https://raw.githubusercontent.com/soniasocadagui/canis-hackathon-app/main/data/low_res_custom.geo.json"
 f = requests.get(url)
 countries = f.json()
 
 
 # predictions
-predict_path = "https://raw.githubusercontent.com/soniasocadagui/mdaheroku/main/data/predictions.xlsx"
+predict_path = "https://raw.githubusercontent.com/soniasocadagui/canis-hackathon-app/main/data/predictions.xlsx"
 prediction_data = pd.read_excel(predict_path)
 prediction_data = pd.melt(prediction_data, id_vars=["country", 'item'],var_name='year', value_name='gross_per_capita_pin')
 prediction_data['type'] = 'Prediction'
