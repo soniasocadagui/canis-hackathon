@@ -450,7 +450,7 @@ def barchart_howmuch(data_plot_8):
     # Change the bar mode
     fig.update_layout(barmode='stack',
         autosize=False,
-        width=1200,
+        width=600,
         height=500,
         font_size=16,
         legend=dict(title="Methods"),
