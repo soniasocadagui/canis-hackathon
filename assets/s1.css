@@ -232,6 +232,19 @@
     background-color: #1EAEDB;
     border-color: #1EAEDB; }
   
+.nav-pills a {
+    color: #000
+}
+
+.nav-pills a:hover {
+    color: #d64141;
+}
+
+.nav-pills .nav-link.active {
+    color: #fff;
+    background-color: orange;
+}
+
   
   /* Forms
   –––––––––––––––––––––––––––––––––––––––––––––––––– */
