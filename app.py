@@ -86,7 +86,7 @@ characterizing_clust = pd.read_csv("https://raw.githubusercontent.com/soniasocad
 #                 figsize=[850, 150],
 #                 fontsize=130, #fontsize=70
 #                 cmap='Turbo',
-#                 color_background='#03256c')
+#                 color_background='#EEEEEE')
 
 ################################ App Visualizations ################################
 
@@ -506,7 +506,7 @@ def barchart_how(df_competence_fi):
         # legend=dict(title="Methods",yanchor="top",y=1.0,xanchor="right",x=1),
         plot_bgcolor=colors_pal[7],
         paper_bgcolor=colors_pal[7],
-        xaxis_title="Region of focus", yaxis_title="Count"
+        xaxis_title="Region of focus", yaxis_title="# of Followers"
     )
 
     return fig
@@ -762,7 +762,7 @@ CONTENT_STYLE = {
     "margin-left": "18rem",
     "margin-right": "2rem",
     "padding": "2rem 1rem",
-    "background-color": "#f8f9fa"
+    "background-color": "#EEEEEE" #f8f9fa
 }
 
 sidebar = html.Div(
@@ -1074,7 +1074,7 @@ page4_where = html.Div([
     html.Div([
         dcc.Markdown(
         'The most frequent focuses occur in **English-speaking** countries (USA, Canada, United Kingdom, Australia) \
-         with an average frequency of around **200 actors**. Many actors are also influenced by Asia** (China and \
+         with an average frequency of around **200 actors**. Many actors are also influenced by Asia (China and \
          Japan) and **French-speaking** countries (Belgium, France, Canada).',
         style={'text-align': 'justify'}),
     ]),
@@ -1271,4 +1271,3 @@ def render_page_content(pathname):
 
 if __name__ == '__main__':
     app.run(debug=False, port=(os.getenv("PORT", "1010")))
-
