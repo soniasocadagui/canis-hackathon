@@ -250,8 +250,14 @@ text_list = []
 for elem in text_list_aux:
     text_list=text_list+elem.split(",")
 
+vals_remove = ['https','covid19']
+text_list = [val.replace("@","").replace("xi jinping 's","xi jinping").replace(" 黄屏 ","") for val in text_list if val not in vals_remove]
+
 def wordcloud_who(text_list):
     word_could_dict = Counter(text_list)
+    
+    # Clean final tweets
+    
     wordcloud = WordCloud(background_color=colors_pal[7], min_font_size=8,width=800, height=500, 
                           random_state=random_state,collocations=False,colormap='winter_r').generate_from_frequencies(word_could_dict)
     wc_img = wordcloud.to_image()
@@ -1273,4 +1279,3 @@ def render_page_content(pathname):
 
 if __name__ == '__main__':
     app.run(debug=False, port=(os.getenv("PORT", "1010")))
-
