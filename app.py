@@ -911,6 +911,32 @@ page_intro = html.Div([
                    'color': '#03256c',  # Change the color to blue
                    'fontFamily': 'Arial, sans-serif',  # Change the font to Arial or a sans-serif fallback
                    'font-weight':'bold'}),
+    ], id = 'header', className='row flex-display', style={'margin-bottom': '1px'}),
+    html.Div([
+        # Logo and title
+        html.Div([
+            html.Img(src=app.get_asset_url('3.cartoon1.jpg'),
+            id = 'heat-image',
+            style={'height': '300px',
+            'width': 'auto',
+            #'margin-bottom': '25px',
+            'display': 'block', 'margin': 'auto',
+            'text-align': 'center'})
+
+        ], className='one-half column'),
+        html.Div([
+            html.Img(src=app.get_asset_url('4.cartoon2.PNG'),
+            id = 'heat-image',
+            style={'height': '300px',
+            'width': 'auto',
+            #'margin-bottom': '25px',
+            'display': 'block', 'margin': 'auto',
+            'text-align': 'center'})
+
+        ], className='one-half column', style={'margin-bottom': '5px'}),
+
+        ]),#, className='one-half column', id = 'title')
+        
     html.Div([
         dcc.Markdown("Canada, being an advanced economy and open democracy, is susceptible to foreign interference. \
         This interference encompasses **activities conducted by foreign states** or their agents that are **covert, \
@@ -951,9 +977,11 @@ page_intro = html.Div([
 
     1. [Public Safety Canada](https://www.canada.ca/en/security-intelligence-service/corporate/publications/foreign-interference-and-you/foreign-interference-and-you.html1)
     2. [Canadian Security Intelligence Service](https://www.publicsafety.gc.ca/cnt/ntnl-scrt/frgn-ntrfrnc/fi-en.aspx)
+    2. [Cartoon Stock](https://www.cartoonstock.com/search?type=images&keyword=Foreign+Interference+china&page=1 )
+    4. [Ottawa Citizen](https://ottawacitizen.com/opinion/todays-letters-dont-equate-canadas-interference-with-what-china-does)
     """)
     ]),
-    ]),], id='mainContainer', style={'display': 'flex', 'flex-direction': 'column'})
+    ], id='mainContainer', style={'display': 'flex', 'flex-direction': 'column'})
 
 #### Page 1 (What)
 
