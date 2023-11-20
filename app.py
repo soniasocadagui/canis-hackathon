@@ -906,7 +906,7 @@ page_intro = html.Div([
 
     ], id = 'header', className='row flex-display', style={'margin-bottom': '25px'}),
     html.Div([
-    html.H1(children='Foreign Interference?',
+    html.H2(children='Foreign Interference?',
             style={
                    'color': '#03256c',  # Change the color to blue
                    'fontFamily': 'Arial, sans-serif',  # Change the font to Arial or a sans-serif fallback
@@ -951,7 +951,7 @@ page_intro = html.Div([
                  targeting officials at various levels of the government.
     '''),
     ]),
-    html.H2(children='What motivates states to engage in foreign interference?',
+    html.H3(children='What motivates states to engage in foreign interference?',
             style={
                    'color': '#03256c',  # Change the color to blue
                    'fontFamily': 'Arial, sans-serif',  # Change the font to Arial or a sans-serif fallback
@@ -986,7 +986,7 @@ page_intro = html.Div([
 #### Page 1 (What)
 
 page1_what = html.Div([
-    html.H1(children="What tweets could be considered as foreign interference? And what couldn't?",
+    html.H3(children="What tweets could be considered as foreign interference? And what couldn't?",
             style={
                    'color': '#03256c',  # Change the color to blue
                    'fontFamily': 'Arial, sans-serif',  # Change the font to Arial or a sans-serif fallback
@@ -1002,7 +1002,7 @@ page1_what = html.Div([
     ]),
     html.Div([dcc.Graph(id = 'donut_charttweet_what', figure=fig_donutcharttweet_what, config={'displayModeBar': 'hover'}),
               ], className="grid-item"),
-     html.H1(children="What state media outlets or actors could be considered as foreign interference? And what couldn't?",
+     html.H3(children="What state media outlets or actors could be considered as foreign interference? And what couldn't?",
             style={
                    'color': '#03256c',  # Change the color to blue
                    'fontFamily': 'Arial, sans-serif',  # Change the font to Arial or a sans-serif fallback
@@ -1018,7 +1018,7 @@ page1_what = html.Div([
     ]),
     html.Div([dcc.Graph(id = 'donut_chartactor_what', figure=fig_donutchartactor_what, config={'displayModeBar': 'hover'}),
               ], className="grid-item"),
-    html.H1(children="What platforms to be the focus on?",
+    html.H3(children="What platforms to be the focus on?",
             style={
                    'color': '#03256c',  # Change the color to blue
                    'fontFamily': 'Arial, sans-serif',  # Change the font to Arial or a sans-serif fallback
@@ -1037,7 +1037,7 @@ page1_what = html.Div([
 #### Page 2 (Who)
 
 page2_who = html.Div([
-    html.H1(children="Who are the most influential state media actors based on the overall social media followers?",
+    html.H3(children="Who are the most influential state media actors based on the overall social media followers?",
             style={
                    'color': '#03256c',  # Change the color to blue
                    'fontFamily': 'Arial, sans-serif',  # Change the font to Arial or a sans-serif fallback
@@ -1050,7 +1050,7 @@ page2_who = html.Div([
     ]),
     html.Div([dcc.Graph(id = 'bar_chart_who', figure=fig_barchart_who, config={'displayModeBar': 'hover'}),
               ], className="grid-item"),
-    html.H1(children="Who are the key individuals mentioned in the tweets related to foreign interference?",
+    html.H3(children="Who are the key individuals mentioned in the tweets related to foreign interference?",
             style={
                    'color': '#03256c',  # Change the color to blue
                    'fontFamily': 'Arial, sans-serif',  # Change the font to Arial or a sans-serif fallback
@@ -1069,7 +1069,7 @@ page2_who = html.Div([
 #### Page 3 (When)
 
 page3_when = html.Div([
-    html.H1(children="When are the peak days for tweeting about foreign interference?",
+    html.H3(children="When are the peak days for tweeting about foreign interference?",
             style={
                    'color': '#03256c',  # Change the color to blue
                    'fontFamily': 'Arial, sans-serif',  # Change the font to Arial or a sans-serif fallback
@@ -1083,7 +1083,7 @@ page3_when = html.Div([
     ]),
     html.Div([dcc.Graph(id = 'plot_scatterdays_when', figure=fig_scatterdays_when, config={'displayModeBar': 'hover'}),
               ], className="grid-item"),
-    html.H1(children="When are the peak hours for tweeting about foreign interference?",
+    html.H3(children="When are the peak hours for tweeting about foreign interference?",
             style={
                    'color': '#03256c',  # Change the color to blue
                    'fontFamily': 'Arial, sans-serif',  # Change the font to Arial or a sans-serif fallback
@@ -1102,7 +1102,7 @@ page3_when = html.Div([
 #### Page 4 (Where)
 
 page4_where = html.Div([
-    html.H1(children="Where are the most frequent geographic region focuses of the State media outlets or actors?",
+    html.H3(children="Where are the most frequent geographic region focuses of the State media outlets or actors?",
             style={
                    'color': '#03256c',  # Change the color to blue
                    'fontFamily': 'Arial, sans-serif',  # Change the font to Arial or a sans-serif fallback
@@ -1121,7 +1121,7 @@ page4_where = html.Div([
 #### Page 5 (Why)
 
 page5_why = html.Div([
-    html.H1(children="Why do certain regions become the focus of foreign interference activities?",
+    html.H3(children="Why do certain regions become the focus of foreign interference activities?",
             style={
                    'color': '#03256c',  # Change the color to blue
                    'fontFamily': 'Arial, sans-serif',  # Change the font to Arial or a sans-serif fallback
@@ -1141,7 +1141,7 @@ page5_why = html.Div([
 #### Page 6 (How)
 
 page6_how = html.Div([
-    html.H1(children="How influential are state media actors on different social media platforms?",
+    html.H3(children="How influential are state media actors on different social media platforms?",
             style={
                    'color': '#03256c',  # Change the color to blue
                    'fontFamily': 'Arial, sans-serif',  # Change the font to Arial or a sans-serif fallback
@@ -1160,7 +1160,7 @@ page6_how = html.Div([
 #### Page 7 (How much)
 
 page7_howmuch = html.Div([
-    html.H1(children="How much has the distribution of the foreign interference changed over time?",
+    html.H3(children="How much has the distribution of the foreign interference changed over time?",
             style={
                    'color': '#03256c',  # Change the color to blue
                    'fontFamily': 'Arial, sans-serif',  # Change the font to Arial or a sans-serif fallback
@@ -1199,7 +1199,7 @@ text_bold = [True, True, True, True, True, True, True, True, True, True]
 text_size = ['16px', '16px', '16px', '16px', '16px', '16px', '16px', '16px', '16px']
 
 page8_model = html.Div([
-    html.H1(children="How do we explain difficult concepts to senior decision-makers?",
+    html.H3(children="How do we explain difficult concepts to senior decision-makers?",
             style={
                    'color': '#03256c',  # Change the color to blue
                    'fontFamily': 'Arial, sans-serif',  # Change the font to Arial or a sans-serif fallback
@@ -1221,7 +1221,7 @@ page8_model = html.Div([
                           width='100%', height='1050px'),], 
              #className="grid-item"
             ),
-    html.H1(children="Who is a state foreign interfering actor? Who isn’t?",
+    html.H3(children="Who is a state foreign interfering actor? Who isn’t?",
             style={
                    'color': '#03256c',  # Change the color to blue
                    'fontFamily': 'Arial, sans-serif',  # Change the font to Arial or a sans-serif fallback
