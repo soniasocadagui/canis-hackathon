@@ -3,8 +3,7 @@
 import dash
 import requests
 
-from dash import html
-from dash import dcc
+from dash import html, dcc, dash_table
 from dash.dependencies import Input, Output
 from io import BytesIO
 from zipfile import ZipFile
@@ -22,19 +21,21 @@ import numpy as np
 import os
 import matplotlib.pyplot as plt
 import base64
+import collections
+import networkx as nx
 
 import igraph as ig
 
 from chart_studio import plotly as py
 import plotly.graph_objs as go
 from plotly.offline import iplot
+from networkx.algorithms.community.centrality import girvan_newman
 
 # Define random state for reproducibility
 random_state = 0
 
 # Define color palette
 colors_pal = ['#6bfdeb','#22eaea','#31a0d9','#143a72','#221c3f','#FFFFFF','#000000','#EEEEEE']
-
 
 ################################ Creating Data for the app ################################
 
@@ -68,16 +69,30 @@ countries = pd.read_csv("https://raw.githubusercontent.com/soniasocadagui/canis-
                         sep=",", encoding='latin-1')
 
 ################ df data_plot_how_much
-#data_plot_how_much = pd.read_csv("https://raw.githubusercontent.com/soniasocadagui/canis-hackathon-app/main/data/data_plot_how_much3.csv",
-#                                 sep=";", low_memory=False)
+data_plot_how_much = pd.read_csv("https://raw.githubusercontent.com/soniasocadagui/canis-hackathon-app/main/data/data_plot_how_much.csv",
+                                 sep=";", low_memory=False)
 
+################ df characterizing_clust
+characterizing_clust = pd.read_csv("https://raw.githubusercontent.com/soniasocadagui/canis-hackathon-app/main/data/characterizing_clust.csv", sep=";", low_memory=False)
+
+#from d3blocks import D3Blocks
+#d3 = D3Blocks(verbose=30)
+#
+#d3.particles('DataWeavers',
+#                 filepath='team_name.html',
+#                 collision=0.1,
+#                 #spacing=7,
+#                 figsize=[850, 150],
+#                 fontsize=130,
+#                 cmap='Turbo',
+#                 color_background='#f8f9fa')
 
 ################################ App Visualizations ################################
 
-##### Define data to plot 'fig_donutchart_what'
+##### Define data to plot 'fig_donutcharttweet_what'
 data_plot_1 = df_foreign_interf[df_foreign_interf['proxy_is_foreing_interf_canada'] != "nan"][["proxy_is_foreing_interf_canada"]].value_counts()
 
-def donutchart_what(data_plot_1):
+def donutcharttweet_what(data_plot_1):
     # Define the list of attacks
     labels_plot = list(data_plot_1.index.get_level_values('proxy_is_foreing_interf_canada'))
     # Define number of occurences of attacks
@@ -99,21 +114,54 @@ def donutchart_what(data_plot_1):
 
     return fig
 
-fig_donutchart_what = donutchart_what(data_plot_1)
+fig_donutcharttweet_what = donutcharttweet_what(data_plot_1)
+
+#fig_donutcharttweet_what
+
+##### Define data to plot 'fig_donutchartactor_what'
+data_plot_12 = df_competence_fi[(df_competence_fi['proxy_is_foreing_interf_canada'].isin(["Yes","No"])) & (df_competence_fi['Language'].isin(["English"]))][["proxy_is_foreing_interf_canada"]].value_counts()
+
+def donutchartactor_what(data_plot_12):
+    # Define the list of attacks
+    labels_plot = list(data_plot_12.index.get_level_values('proxy_is_foreing_interf_canada'))
+    # Define number of occurences of attacks
+    values_plot = list(np.ravel(df_competence_fi[df_competence_fi['proxy_is_foreing_interf_canada'] != "nan"][["proxy_is_foreing_interf_canada"]].value_counts()))
+
+    # Plot donut chart
+    fig = go.Figure(data=[go.Pie(labels=labels_plot, values=values_plot, hole=.4)])
+    fig.update_layout(
+        autosize=False,
+        width=500,
+        height=500,
+        font_size=16,
+        legend=dict(title="Is Foreign Interference?",yanchor="top",y=1.35,xanchor="left",x=0.0),
+        plot_bgcolor=colors_pal[7],
+        paper_bgcolor=colors_pal[7]
+    )
+    fig.update_traces(hoverinfo='label+value+percent', textinfo='value+percent',
+                      marker=dict(colors=colors_pal))
+
+    return fig
+
+fig_donutchartactor_what = donutchartactor_what(data_plot_12)
+
+#fig_donutchartactor_what
 
 ##### Define data to plot 'fig_barchart_what'
+data_valid_plot = df_competence_fi[(df_competence_fi['proxy_is_foreing_interf_canada'].isin(["Yes","No"])) & (df_competence_fi['Language'].isin(["English"]))]
+
 # Select and arrange data to plot
-pt1 = pd.DataFrame(df_competence_fi[df_competence_fi['X (Twitter) handle'].notnull()]['proxy_is_foreing_interf_canada'])
+pt1 = pd.DataFrame(data_valid_plot[data_valid_plot['X (Twitter) handle'].notnull()]['proxy_is_foreing_interf_canada'])
 pt1['platform'] = "Twitter"
-pt2 = pd.DataFrame(df_competence_fi[df_competence_fi['Facebook page'].notnull()]['proxy_is_foreing_interf_canada'])
+pt2 = pd.DataFrame(data_valid_plot[data_valid_plot['Facebook page'].notnull()]['proxy_is_foreing_interf_canada'])
 pt2['platform'] = "Facebook"
-pt3 = pd.DataFrame(df_competence_fi[df_competence_fi['Instragram page'].notnull()]['proxy_is_foreing_interf_canada'])
+pt3 = pd.DataFrame(data_valid_plot[data_valid_plot['Instragram page'].notnull()]['proxy_is_foreing_interf_canada'])
 pt3['platform'] = "Instagram"
-pt4 = pd.DataFrame(df_competence_fi[df_competence_fi['Threads account'].notnull()]['proxy_is_foreing_interf_canada'])
+pt4 = pd.DataFrame(data_valid_plot[data_valid_plot['Threads account'].notnull()]['proxy_is_foreing_interf_canada'])
 pt4['platform'] = "Threads"
-pt5 = pd.DataFrame(df_competence_fi[df_competence_fi['YouTube account'].notnull()]['proxy_is_foreing_interf_canada'])
+pt5 = pd.DataFrame(data_valid_plot[data_valid_plot['YouTube account'].notnull()]['proxy_is_foreing_interf_canada'])
 pt5['platform'] = "YouTube"
-pt6 = pd.DataFrame(df_competence_fi[df_competence_fi['TikTok account'].notnull()]['proxy_is_foreing_interf_canada'])
+pt6 = pd.DataFrame(data_valid_plot[data_valid_plot['TikTok account'].notnull()]['proxy_is_foreing_interf_canada'])
 pt6['platform'] = "TikTok"
 
 data_plot_2 = pd.concat([pt1,pt2,pt3,pt4,pt5,pt6])
@@ -143,6 +191,8 @@ def barchart_what(data_plot_2):
     return fig
 
 fig_barchart_what = barchart_what(data_plot_2)
+
+#fig_barchart_what
 
 ##### Define data to plot 'fig_barchart_who'
 # Input missing values with 0 (0 followers)
@@ -179,6 +229,8 @@ def barchart_who(data_plot_3):
     return fig
 
 fig_barchart_who = barchart_who(data_plot_3)
+
+#fig_barchart_who
 
 ##### Define data to plot 'fig_wordcloud_who'
 # Guide for Named Entity Recognition (NER) https://towardsdatascience.com/named-entity-recognition-with-nltk-and-spacy-8c4a7d88e7da
@@ -236,7 +288,7 @@ def scatterdays_when(data_plot_4):
         width=700,
         height=400,
         font_size=16,
-        legend=dict(title="Is Foreign Interference?",yanchor="top",y=1,xanchor="left",x=0.3),
+        legend=dict(title="Is Foreign Interference?",yanchor="top",y=1.4,xanchor="left",x=0.6),
         plot_bgcolor=colors_pal[7],
         paper_bgcolor=colors_pal[7],
         xaxis_title="Day of Week", yaxis_title="Participation"
@@ -245,6 +297,8 @@ def scatterdays_when(data_plot_4):
     return fig
 
 fig_scatterdays_when = scatterdays_when(data_plot_4)
+
+#fig_scatterdays_when
 
 ##### Define data to plot 'fig_scatterhour_when'
 data_plot_5 = data_plot_when[['hour','proxy_is_foreing_interf_canada','Name (English)']].groupby(['hour','proxy_is_foreing_interf_canada']).count().reset_index().sort_values(by=['hour'])
@@ -282,6 +336,8 @@ def scatterhour_when(data_plot_5):
 
 fig_scatterhour_when = scatterhour_when(data_plot_5)
 
+#fig_scatterhour_when
+
 ##### Define data to plot 'fig_map_where'
 data_plot_aux = df_competence_fi[['Region of Focus','Name (English)']].groupby(['Region of Focus']).count().reset_index()
 
@@ -292,7 +348,7 @@ special_regions = ['Anglosphere','la Francophonie']
 
 dp1 = data_plot_aux[~(data_plot_aux['Region of Focus'].isin(special_regions))]
 
-#Canada, USA, Australia
+#Canada, USA, Australia, Great Britain
 dp2 = data_plot_aux[data_plot_aux['Region of Focus'].isin([special_regions[0]])]
 lat_dp2 = dp2['lat'].str.split(",").iloc[0]
 lon_dp2 = dp2['long'].str.split(",").iloc[0]
@@ -309,7 +365,11 @@ dp2_c3 = dp2.copy()
 dp2_c3['lat'] = lat_dp2[2]
 dp2_c3['long'] = lon_dp2[2]
 
-dp2 = pd.concat([dp2_c1,dp2_c2,dp2_c3])
+dp2_c4 = dp2.copy()
+dp2_c4['lat'] = lat_dp2[3]
+dp2_c4['long'] = lon_dp2[3]
+
+dp2 = pd.concat([dp2_c1,dp2_c2,dp2_c3,dp2_c4])
 
 # France, Belgium, Canada
 dp3 = data_plot_aux[data_plot_aux['Region of Focus'].isin([special_regions[1]])]
@@ -382,6 +442,8 @@ def map_where(data_plot_6, colors_pal):
 
 fig_map_where = map_where(data_plot_6, colors_pal)
 
+#fig_map_where
+
 ##### Define data to plot 'fig_barchart_why'
 data_plot_7 = df_competence_fi[df_competence_fi['proxy_is_foreing_interf_canada'] == 'Yes'][['Region of Focus','Name (English)']].groupby(['Region of Focus']).count().reset_index()
 data_plot_7.rename(columns={'Name (English)': "Frequency"}, inplace=True)
@@ -422,24 +484,41 @@ def barchart_why(data_plot_7):
 
 fig_barchart_why = barchart_why(data_plot_7)
 
-##### Define data to plot 'fig_XX_how'
+#fig_barchart_why
+
+##### Define data to plot 'fig_barchart_how'
+
+def barchart_how(df_competence_fi):
+    # Define the list of social media platforms
+    x_axis = ['Twitter','Facebook','Instagram','Threads','YouTube','TikTok']
+    # Define mean of followers
+    values_plot = df_competence_fi[['X (Twitter) Follower #','Facebook Follower #','Instagram Follower #','Threads Follower #','YouTube Subscriber #','TikTok Subscriber #']].mean()
+
+    # Plot barchart
+    fig = go.Figure([go.Bar(x=x_axis, y=values_plot,marker_color=px.colors.sequential.ice)])
+
+    fig.update_layout(
+        autosize=False,
+        width=800,
+        height=500,
+        font_size=16,
+        # legend=dict(title="Methods",yanchor="top",y=1.0,xanchor="right",x=1),
+        plot_bgcolor=colors_pal[7],
+        paper_bgcolor=colors_pal[7],
+        xaxis_title="Region of focus", yaxis_title="Count"
+    )
+
+    return fig
+
+fig_barchart_how = barchart_how(df_competence_fi)
+
+#fig_barchart_how
 
 ##### Define data to plot 'fig_barchart_howmuch'
-#data_plot_8 = data_plot_how_much.copy()
-data_plot_8 = df_foreign_interf[(df_foreign_interf['proxy_is_foreing_interf_canada'] != "nan") & 
-                                (df_foreign_interf['date_hour'].notnull())]
-
-# Get year, month and day
-data_plot_8['year_month_day'] = pd.to_datetime(df_foreign_interf['date_hour']).dt.strftime('%Y-%m-%d')
-
-# Get crosstable
-data_plot_8 = pd.crosstab(data_plot_8['year_month_day'], data_plot_8['proxy_is_foreing_interf_canada'])
-data_plot_8 = data_plot_8.div(data_plot_8.sum(axis=1), axis=0).reset_index()
-
-# Export data for fast load in APP
-#data_plot.to_csv(data_path + '/data_plot_how_much.csv', index = False, sep = ";")
+data_plot_8 = data_plot_how_much.copy()
 
 def barchart_howmuch(data_plot_8):
+    data_plot_8['year_month_day'] = data_plot_8['year_month_day'].astype(str)
     fig = go.Figure(data=[
     go.Bar(name=data_plot_8.columns[1], x=list(data_plot_8['year_month_day']), 
                                         y=list(data_plot_8.iloc[0:,1]),marker_color=colors_pal[0]),
@@ -451,147 +530,219 @@ def barchart_howmuch(data_plot_8):
     fig.update_layout(barmode='stack',
         autosize=False,
         width=600,
-        height=500,
+        height=400,
         font_size=16,
         legend=dict(title="Methods"),
         plot_bgcolor=colors_pal[7],
         paper_bgcolor=colors_pal[7],
         xaxis_title="Tweet date", yaxis_title="Participation"
     )
+    fig.update_xaxes(tickangle=270)
 
     return fig
 
 fig_barchart_howmuch = barchart_howmuch(data_plot_8)
 
-##### Define data to plot 'fig_network_similarity'
+#fig_barchart_howmuch
+
+##### Define data to plot 'fig_network_similarity' 
 # Define features to employ
-vars_use = ['X (Twitter) Follower #','Facebook Follower #','Instagram Follower #','Threads Follower #','YouTube Subscriber #','TikTok Subscriber #']
-features = df_competence_fi[vars_use].fillna(0).values
-features
+#vars_use = ['X (Twitter) Follower #','Facebook Follower #','Instagram Follower #','Threads Follower #','YouTube Subscriber #','TikTok Subscriber #','views',
+#            'reposts', 'replies', 'likes', 'bookmarks','proxy_is_foreing_interf_canada']
+#
+#features = df_competence_fi[vars_use].fillna(0)
+#features['FI_flag'] = np.where(features['proxy_is_foreing_interf_canada'] == "Yes",1,0)
+#features = features.drop(['proxy_is_foreing_interf_canada'],axis=1)
+#features
+#
+#vars_cap = features.columns
+#
+## Cap and floor variables selected
+#features = treatoutliers(df = features, columns = vars_cap, factor = 2.0, method = 'PCT', treament = 'cap', pct_min = 0.05, pct_max = 0.95)
+#features= features.values
+#
+## Define min max scaler
+#scaler = MinMaxScaler()
+#
+## Transform data
+#features = scaler.fit_transform(features)
+#
+## Define similarity matrix
+#similarity = 1-pairwise_distances(features, metric="cosine")
+#
+## Define threshold of similarity to create edges
+#threshold = 0.9
+#
+## Create adjacency matrix
+#adj_matrix = similarity.copy()
+#adj_matrix[adj_matrix >= threshold] = 1
+#adj_matrix[adj_matrix < threshold] = 0
+#np.fill_diagonal(adj_matrix, 0)
+#adj_matrix
+#
+#def adjacency_matrix_to_edges(adjacency_matrix):
+#    edges = []
+#    num_nodes = len(adjacency_matrix)
+#
+#    for i in range(num_nodes):
+#        for j in range(i + 1, num_nodes):  # Iterate over the upper triangle to avoid duplicate edges
+#            if adjacency_matrix[i][j] == 1:
+#                edges.append((i, j))  # For an undirected graph, order doesn't matter
+#
+#    return edges
+#
+#Edges = adjacency_matrix_to_edges(adj_matrix)
+#
+#def network_similarity(Edges, df_competence_fi):
+#    G2=ig.Graph(Edges, directed=False)
+#    labels= list(df_competence_fi['Name (English)'])
+#
+#    # num_communities = 6
+#    G = nx.Graph()
+#    G.add_edges_from(Edges)
+#
+#    list_nodes = []
+#    for v in G2.vs:
+#        node_id = int(str(v).split(",")[1].replace("'",""))
+#        list_nodes.append(node_id)
+#    N=len(list_nodes)
+#
+#    communities = girvan_newman(G)
+#    # communities = list(nx.algorithms.community.asyn_fluidc(G, k=num_communities)) # Fluid Communities require connected Graphs.
+#
+#    # communities = list(nx.algorithms.community.spectral_clustering(G, num_communities)) # Not working
+#    # communities = list(nx.label_propagation_communities(G)) # Not working
+#    # communities = list(nx.algorithms.community.louvain(G)) # Not working
+#
+#    # communities = nx.algorithms.community.kernighan_lin_bisection(G) # 2 comunities
+#
+#    # communities = list(nx.algorithms.community.greedy_modularity_communities(G)) # 7 comunities
+#
+#    # communities = list(nx.algorithms.community.asyn_lpa_communities(G)) #15 comunities
+#
+#    node_groups = []
+#    for com in next(communities):
+#        node_groups.append(list(com))
+#    # node_groups = communities
+#
+#
+#    node_flatten = []
+#    for ng in node_groups:
+#        node_flatten = node_flatten + list(ng)
+#
+#    set_difference = set(list_nodes) - set(node_flatten)
+#    list_difference_result = list(set_difference)
+#    list_difference_result
+#
+#    node_groups.append(list_difference_result)
+#
+#    print("Number of communities detected: ",len(node_groups))
+#
+#    # Create a dictionary to map individuals to group numbers
+#    individual_to_group = {}
+#    for i, group in enumerate(node_groups):
+#        for individual in group:
+#            individual_to_group[individual] = i
+#    individual_to_group = collections.OrderedDict(sorted(individual_to_group.items()))
+#
+#    groups = [value for key, value in individual_to_group.items() for node in list_nodes if node == key]
+#    
+#    layt=G2.layout('kk', dim=3)
+#    Xn=[layt[k][0] for k in range(N)]# x-coordinates of nodes
+#    Yn=[layt[k][1] for k in range(N)]# y-coordinates
+#    Zn=[layt[k][2] for k in range(N)]# z-coordinates
+#    Xe=[]
+#    Ye=[]
+#    Ze=[]
+#    for e in Edges:
+#        Xe+=[layt[e[0]][0],layt[e[1]][0], None]# x-coordinates of edge ends
+#        Ye+=[layt[e[0]][1],layt[e[1]][1], None]
+#        Ze+=[layt[e[0]][2],layt[e[1]][2], None]
+#
+#    # import plotly.plotly as py
+#    from chart_studio import plotly as py
+#    import plotly.graph_objs as go
+#    from plotly.offline import iplot
+#
+#    trace1=go.Scatter3d(x=Xe,
+#                   y=Ye,
+#                   z=Ze,
+#                   mode='lines',
+#                   line=dict(color='rgb(125,125,125)', width=1),
+#                   hoverinfo='none'
+#                   )
+#
+#    trace2=go.Scatter3d(x=Xn,
+#                   y=Yn,
+#                   z=Zn,
+#                   mode='markers',
+#                   name='actors',
+#                   marker=dict(symbol='circle',
+#                                 size=6,
+#                                 color=groups,
+#                                #  colorscale='Viridis',
+#                                 colorscale=['red','green','blue','black','orange','cyan','yellow',"grey","purple"],
+#                                 line=dict(color='rgb(50,50,50)', width=0.5)
+#                                 ),
+#                   text=labels,
+#                   hoverinfo='text'
+#                   )
+#
+#    axis=dict(showbackground=False,
+#              showline=False,
+#              zeroline=False,
+#              showgrid=False,
+#              showticklabels=False,
+#              title=''
+#              )
+#
+#    layout = go.Layout(
+#             title="Network Analysis of State Media Outlets and Actors Based on Media Influence",
+#             width=1000,
+#             height=1000,
+#             showlegend=False,
+#             scene=dict(
+#                 xaxis=dict(axis),
+#                 yaxis=dict(axis),
+#                 zaxis=dict(axis),
+#            ),
+#         margin=dict(
+#            t=100
+#        ),
+#        hovermode='closest',
+#        annotations=[
+#               dict(
+#               showarrow=False,
+#                text="",
+#                xref='paper',
+#                yref='paper',
+#                x=0,
+#                y=0.1,
+#                xanchor='left',
+#                yanchor='bottom',
+#                font=dict(
+#                size=14
+#                )
+#                )
+#            ],    )
+#
+#
+#    data=[trace1, trace2]
+#    fig=go.Figure(data=data, layout=layout)
+#    #iplot(fig, filename='Les-Miserables')
+#
+#    return fig
+#
+#fig_network_similarity = network_similarity(Edges, df_competence_fi)
+#fig_network_similarity.write_html("network_similarity.html")
 
-# Define min max scaler
-scaler = MinMaxScaler()
-
-# Transform data
-features = scaler.fit_transform(features)
-
-# Define similarity matrix
-similarity = 1-pairwise_distances(features, metric="cosine")
-
-# Define threshold of similarity to create edges
-threshold = 0.9
-
-# Create adjacency matrix
-adj_matrix = similarity.copy()
-adj_matrix[adj_matrix >= threshold] = 1
-adj_matrix[adj_matrix < threshold] = 0
-np.fill_diagonal(adj_matrix, 0)
-
-def adjacency_matrix_to_edges(adjacency_matrix):
-    edges = []
-    num_nodes = len(adjacency_matrix)
-
-    for i in range(num_nodes):
-        for j in range(num_nodes):
-            if adjacency_matrix[i][j] == 1:
-                edges.append((j, i))  # Assuming the matrix is for a directed graph
-
-    return edges
-
-Edges = adjacency_matrix_to_edges(adj_matrix)
-
-def network_similarity(Edges, df_competence_fi):
-    G2=ig.Graph(Edges, directed=False)
-    labels= list(df_competence_fi['Name (English)'])
-    group = [1] * int(df_competence_fi.shape[0])
-    N=len(labels)
-
-    layt=G2.layout('kk', dim=3)
-    Xn=[layt[k][0] for k in range(N)]# x-coordinates of nodes
-    Yn=[layt[k][1] for k in range(N)]# y-coordinates
-    Zn=[layt[k][2] for k in range(N)]# z-coordinates
-    Xe=[]
-    Ye=[]
-    Ze=[]
-    for e in Edges:
-        Xe+=[layt[e[0]][0],layt[e[1]][0], None]# x-coordinates of edge ends
-        Ye+=[layt[e[0]][1],layt[e[1]][1], None]
-        Ze+=[layt[e[0]][2],layt[e[1]][2], None]
-
-    trace1=go.Scatter3d(x=Xe,
-                   y=Ye,
-                   z=Ze,
-                   mode='lines',
-                   line=dict(color='rgb(125,125,125)', width=1),
-                   hoverinfo='none'
-                   )
-
-    trace2=go.Scatter3d(x=Xn,
-                   y=Yn,
-                   z=Zn,
-                   mode='markers',
-                   name='actors',
-                   marker=dict(symbol='circle',
-                                 size=6,
-                                 color=group,
-                                 colorscale='Viridis',
-                                 line=dict(color='rgb(50,50,50)', width=0.5)
-                                 ),
-                   text=labels,
-                   hoverinfo='text'
-                   )
-
-    axis=dict(showbackground=False,
-              showline=False,
-              zeroline=False,
-              showgrid=False,
-              showticklabels=False,
-              title=''
-              )
-
-    layout = go.Layout(
-             title="Network of coappearances of characters in Victor Hugo's novel<br> Les Miserables (3D visualization)",
-             width=1000,
-             height=1000,
-             showlegend=False,
-             scene=dict(
-                 xaxis=dict(axis),
-                 yaxis=dict(axis),
-                 zaxis=dict(axis),
-            ),
-         margin=dict(
-            t=100
-        ),
-        hovermode='closest',
-        annotations=[
-               dict(
-               showarrow=False,
-                text="Data source: <a href='http://bost.ocks.org/mike/miserables/miserables.json'>[1] miserables.json</a>",
-                xref='paper',
-                yref='paper',
-                x=0,
-                y=0.1,
-                xanchor='left',
-                yanchor='bottom',
-                font=dict(
-                size=14
-                )
-                )
-            ],    )
-
-
-    data = [trace1, trace2]
-    fig = go.Figure(data=data, layout=layout)
-    #iplot(fig, filename='Les-Miserables')
-
-    return fig
-
-fig_network_similarity = network_similarity(Edges, df_competence_fi)
-
+#fig_network_similarity
 
 ################################ Creating the app ################################
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.SPACELAB])
 server = app.server
+
+#app = dash.Dash(external_stylesheets=[dbc.themes.SPACELAB])
 
 # the style arguments for the sidebar. We use position:fixed and a fixed width
 SIDEBAR_STYLE = {
@@ -673,12 +824,13 @@ sidebar = html.Div(
                                                                      'borderRadius': '5px',
                                                                       'margin': '3px',
                                                                       'font-weight':'bold'}),
-                dbc.NavLink("Model", href="/page-8", active="exact", style={'textAlign': 'center','fontSize': 16,
+                dbc.NavLink("Graph Network", href="/page-8", active="exact", style={'textAlign': 'center','fontSize': 16,
                                                                       'borderWidth': '1px',
                                                                       'borderStyle': 'dashed',
                                                                       'borderRadius': '5px',
                                                                       'margin': '3px',
-                                                                      'font-weight':'bold'})
+                                                                      'font-weight':'bold',
+                                                                      "background-color": "#5aacae"})
             ],
             vertical=True,
             pills=True,
@@ -693,27 +845,44 @@ app.layout = html.Div([dcc.Location(id="url"), sidebar, content])
 
 #### Page Intro
 
+# Construct the raw content URL
+raw_url = f"https://raw.githubusercontent.com/soniasocadagui/canis-hackathon-app/main/Particles - D3blocks Armandis.html"
+
+# Make a request to fetch the raw HTML content
+response = requests.get(raw_url)
+
+if response.status_code == 200:
+    # The content of the HTML file is in response.text
+    html_content = response.text
+else:
+    html_content = f"Failed to fetch HTML content. Status code: {response.status_code}"
+
 page_intro = html.Div([
     html.Div([
 
         # Logo and title
         html.Div([
-            html.Img(src=app.get_asset_url('1.team_name.PNG'),
-            id = 'heat-image',
-            style={'height': '100px',
-            'width': '500px',
-            'margin-bottom': '25px',
-            'textAlign': 'center'})
-
-        ], className='one-half column'),
-        html.Div([
-            html.Div([
-                html.H1('CANIS Data Visualization and Foreign Interference', 
-                        style={'margin-bottom': '0px', 'color': '#808080','fontSize': 26, 'font-weight':'bold'}),
-                html.H5('', style={'margin-bottom': '0px', 'color': '#808080'})
-            ])
-
-        ], className='one-half column', id = 'title')
+            #html.Iframe(srcDoc=open('https://raw.githubusercontent.com/soniasocadagui/canis-hackathon-app/main/Particles - D3blocks Armandis.html', 'r').read(),            
+            html.Iframe(srcDoc=html_content,
+                        width='100%',  # Set the width of the iframe container
+                        height='170px',  # Set the height of the iframe container
+                        style={'overflow': 'hidden'}  # Hide the overflow to crop the iframe content
+                        ),
+            #html.Img(src=app.get_asset_url('1.team_name.PNG'),
+            #id = 'heat-image',
+            #style={'height': '100px',
+            #'width': '500px',
+            #'margin-bottom': '25px',
+            #'textAlign': 'center'})
+        ]),#, className='one-half column'),
+        #html.Div([
+        #    html.Div([
+        #        html.H1('CANIS Data Visualization and Foreign Interference', 
+        #                style={'margin-bottom': '0px', 'color': '#808080','fontSize': 26, 'font-weight':'bold'}),
+        #        html.H5('', style={'margin-bottom': '0px', 'color': '#808080'})
+        #    ])
+#
+        #], className='one-half column', id = 'title')
         
 
     ], id = 'header', className='row flex-display', style={'margin-bottom': '25px'}),
@@ -768,7 +937,15 @@ page1_what = html.Div([
          from there). The following pie chart shows the percentage of Foreign Interference estimated.',
         style={'text-align': 'justify'}),
     ]),
-    html.Div([dcc.Graph(id = 'donut_chart_what', figure=fig_donutchart_what, config={'displayModeBar': 'hover'}),
+    html.Div([dcc.Graph(id = 'donut_charttweet_what', figure=fig_donutcharttweet_what, config={'displayModeBar': 'hover'}),
+              ], className="grid-item"),
+     html.H1("What state media outlets or actors could be considered as foreign interference? And what couldn't?"),
+    html.Div([
+        dcc.Markdown(
+        '.',
+        style={'text-align': 'justify'}),
+    ]),
+    html.Div([dcc.Graph(id = 'donut_chartactor_what', figure=fig_donutchartactor_what, config={'displayModeBar': 'hover'}),
               ], className="grid-item"),
     html.H1("What platforms to be the focus on?"),
     html.Div([
@@ -860,14 +1037,14 @@ page5_why = html.Div([
 #### Page 6 (How)
 
 page6_how = html.Div([
-    html.H1("How do we explain difficult concepts to senior decision-makers?"),
+    html.H1("How influential are state media actors on different social media platforms?"),
     html.Div([
         dcc.Markdown(
         '.',
         style={'text-align': 'justify'}),
     ]),
-    #html.Div([dcc.Graph(id = 'bar_chart_why', figure=fig_barchart_why, config={'displayModeBar': 'hover'}),
-    #          ], className="grid-item"),
+    html.Div([dcc.Graph(id = 'bar_chart_how', figure=fig_barchart_how, config={'displayModeBar': 'hover'}),
+              ], className="grid-item"),
     ])
 
 #### Page 7 (How much)
@@ -885,15 +1062,80 @@ page7_howmuch = html.Div([
 
 #### Page 8 (Model)
 
+# Construct the raw content URL
+raw_url2 = f"https://raw.githubusercontent.com/soniasocadagui/canis-hackathon-app/main/network_similarity.html"
+
+# Make a request to fetch the raw HTML content
+response2 = requests.get(raw_url2)
+
+if response.status_code == 200:
+    # The content of the HTML file is in response.text
+    html_content2 = response2.text
+else:
+    html_content2 = f"Failed to fetch HTML content. Status code: {response.status_code}"
+    
+# List of colors
+colorscale=['orange','cyan',"purple",'red','green','blue','black','yellow',"grey"]
+hex_text_colors=['#ffffff','#000000','#ffffff','#000000','#ffffff','#ffffff','#ffffff','#000000','#ffffff']
+text_bold = [True, True, True, True, True, True, True, True, True, True]
+text_size = ['16px', '16px', '16px', '16px', '16px', '16px', '16px', '16px', '16px']
+
 page8_model = html.Div([
-    html.H1("Graph Similarity Network"),
+    html.H1("How do we explain difficult concepts to senior decision-makers?"),
     html.Div([
         dcc.Markdown(
         '.',
         style={'text-align': 'justify'}),
     ]),
-    html.Div([dcc.Graph(id = 'graph_network_similarity', figure=fig_network_similarity, config={'displayModeBar': 'hover'}),
-              ], className="grid-item"),
+    #html.Div([dcc.Graph(id = 'graph_network_similarity', figure=fig_network_similarity, config={'displayModeBar': 'hover'}),
+    #          ], className="grid-item"),
+    #html.Div([html.Iframe(srcDoc=open('network_similarity.html', 'r', encoding='utf-8').read(), 
+    html.Div([html.Iframe(srcDoc=html_content2,
+                          width='100%', height='1050px'),], 
+             #className="grid-item"
+            ),
+    html.H1("Who is a state foreign interfering actor? Who isn’t?"),
+    html.Div([
+        dcc.Markdown(
+        '.',
+        style={'text-align': 'justify'}),
+    ]),
+    html.Div([dash_table.DataTable(characterizing_clust.to_dict('records'), 
+                                   [{"name": i, "id": i} for i in characterizing_clust.columns],
+                                   #fill_width=False, 
+                                   style_table={'width': '100%',
+                                               'border': '1px solid black'},
+                                   style_cell={'whiteSpace': 'normal',  # Set to 'normal' to allow content to wrap
+                                               'height': 'auto',  # Set height to 'auto' to adjust the cell height as needed
+                                               'overflow': 'hidden',
+                                               'text-align': 'center',# Hide overflow content if any
+                                               'border': '1px solid black', 
+                                              },
+                                   style_header={
+            'backgroundColor': 'rgb(230, 230, 230)',  # Set background color for header
+            'fontWeight': 'bold',  # Make header text bold
+            'fontSize': '18px',  # Set font size for header text
+            'border': '1px solid black',  # Set border for header
+        },
+                                   style_data_conditional=[
+            {
+                'if': {'row_index': i},
+                'backgroundColor': colorscale[i],
+                'color': hex_text_colors[i],
+                'fontWeight': 'bold' if text_bold[i] else 'normal',
+                'fontSize': text_size[i],
+                 'border': '1px solid black',  # Set border for each row
+            }
+            for i in range(9)
+        ],
+                        #style_cell={
+                        #    #'padding-right': '30px',
+                        #    #'padding-left': '10px',
+                        #    'text-align': 'justify',
+                        #    #'marginLeft': 'auto',
+                        #    #'marginRight': 'auto'
+                        #}
+                                   )]),
     ])
 
 @app.callback(Output("page-content", "children"), [Input("url", "pathname")])
@@ -929,3 +1171,4 @@ def render_page_content(pathname):
 
 if __name__ == '__main__':
     app.run(debug=False, port=(os.getenv("PORT", "1010")))
+    
