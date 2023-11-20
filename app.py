@@ -333,7 +333,7 @@ def scatterhour_when(data_plot_5):
         width=900,
         height=500,
         font_size=16,
-        legend=dict(title="Is Foreign Interference?",yanchor="top",y=1,xanchor="left",x=0.5),
+        legend=dict(title="Is Foreign Interference?",yanchor="top",y=1,xanchor="left",x=0.7),
         plot_bgcolor=colors_pal[7],
         paper_bgcolor=colors_pal[7],
         xaxis_title="Hour", yaxis_title="Participation"
@@ -542,7 +542,7 @@ def barchart_howmuch(data_plot_8):
         legend=dict(title="Methods"),
         plot_bgcolor=colors_pal[7],
         paper_bgcolor=colors_pal[7],
-        xaxis_title="Tweet date", yaxis_title="Participation"
+        xaxis_title="Year", yaxis_title="Participation"
     )
     fig.update_xaxes(tickangle=270)
 
