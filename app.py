@@ -742,10 +742,10 @@ fig_barchart_howmuch = barchart_howmuch(data_plot_8)
 #fig_network_similarity
 
 ################################ Creating the app ################################
-#app = dash.Dash(__name__, external_stylesheets=[dbc.themes.SPACELAB])
-#server = app.server
+app = dash.Dash(__name__, external_stylesheets=[dbc.themes.SPACELAB])
+server = app.server
 
-app = dash.Dash(external_stylesheets=[dbc.themes.SPACELAB])
+#app = dash.Dash(external_stylesheets=[dbc.themes.SPACELAB])
 
 # the style arguments for the sidebar. We use position:fixed and a fixed width
 SIDEBAR_STYLE = {
