@@ -699,6 +699,8 @@ fig_barchart_howmuch = barchart_howmuch(data_plot_8)
 #
 #    layout = go.Layout(
 #             title="Network Analysis of State Media Outlets and Actors Based on Media Influence",
+#             plot_bgcolor=colors_pal[7],
+#             paper_bgcolor=colors_pal[7]
 #             width=1000,
 #             height=1000,
 #             showlegend=False,
@@ -740,10 +742,10 @@ fig_barchart_howmuch = barchart_howmuch(data_plot_8)
 #fig_network_similarity
 
 ################################ Creating the app ################################
-app = dash.Dash(__name__, external_stylesheets=[dbc.themes.SPACELAB])
-server = app.server
+#app = dash.Dash(__name__, external_stylesheets=[dbc.themes.SPACELAB])
+#server = app.server
 
-#app = dash.Dash(external_stylesheets=[dbc.themes.SPACELAB])
+app = dash.Dash(external_stylesheets=[dbc.themes.SPACELAB])
 
 # the style arguments for the sidebar. We use position:fixed and a fixed width
 SIDEBAR_STYLE = {
@@ -1271,3 +1273,4 @@ def render_page_content(pathname):
 
 if __name__ == '__main__':
     app.run(debug=False, port=(os.getenv("PORT", "1010")))
+
