@@ -73,7 +73,8 @@ data_plot_how_much = pd.read_csv("https://raw.githubusercontent.com/soniasocadag
                                  sep=";", low_memory=False)
 
 ################ df characterizing_clust
-characterizing_clust = pd.read_csv("https://raw.githubusercontent.com/soniasocadagui/canis-hackathon-app/main/data/characterizing_clust.csv", sep=";", low_memory=False)
+characterizing_clust = pd.read_csv("https://raw.githubusercontent.com/soniasocadagui/canis-hackathon-app/main/data/characterizing_clust.csv",
+                                 sep=";", low_memory=False)
 
 #from d3blocks import D3Blocks
 #d3 = D3Blocks(verbose=30)
@@ -83,9 +84,9 @@ characterizing_clust = pd.read_csv("https://raw.githubusercontent.com/soniasocad
 #                 collision=0.1,
 #                 #spacing=7,
 #                 figsize=[850, 150],
-#                 fontsize=130,
+#                 fontsize=130, #fontsize=70
 #                 cmap='Turbo',
-#                 color_background='#f8f9fa')
+#                 color_background='#03256c')
 
 ################################ App Visualizations ################################
 
@@ -110,7 +111,7 @@ def donutcharttweet_what(data_plot_1):
         paper_bgcolor=colors_pal[7]
     )
     fig.update_traces(hoverinfo='label+value+percent', textinfo='value+percent',
-                      marker=dict(colors=colors_pal))
+                      marker=dict(colors=["#72b8cd", "#3e53a0"]))
 
     return fig
 
@@ -139,7 +140,7 @@ def donutchartactor_what(data_plot_12):
         paper_bgcolor=colors_pal[7]
     )
     fig.update_traces(hoverinfo='label+value+percent', textinfo='value+percent',
-                      marker=dict(colors=colors_pal))
+                      marker=dict(colors=["#72b8cd", "#3e53a0"]))
 
     return fig
 
@@ -172,8 +173,8 @@ data_plot_2 = data_plot_2.div(data_plot_2.sum(axis=1), axis=0).reset_index()
 
 def barchart_what(data_plot_2):
     fig = go.Figure(data=[
-    go.Bar(name=data_plot_2.columns[1], x=list(data_plot_2['platform']), y=list(data_plot_2.iloc[0:,1]),marker_color=colors_pal[0]),
-    go.Bar(name=data_plot_2.columns[2], x=list(data_plot_2['platform']), y=list(data_plot_2.iloc[0:,2]),marker_color=colors_pal[1])
+    go.Bar(name=data_plot_2.columns[1], x=list(data_plot_2['platform']), y=list(data_plot_2.iloc[0:,1]),marker_color="#72b8cd"),
+    go.Bar(name=data_plot_2.columns[2], x=list(data_plot_2['platform']), y=list(data_plot_2.iloc[0:,2]),marker_color="#3e53a0")
     ])
 
     # Change the bar mode
@@ -521,9 +522,9 @@ def barchart_howmuch(data_plot_8):
     data_plot_8['year_month_day'] = data_plot_8['year_month_day'].astype(str)
     fig = go.Figure(data=[
     go.Bar(name=data_plot_8.columns[1], x=list(data_plot_8['year_month_day']), 
-                                        y=list(data_plot_8.iloc[0:,1]),marker_color=colors_pal[0]),
+                                        y=list(data_plot_8.iloc[0:,1]),marker_color="#72b8cd"),
     go.Bar(name=data_plot_8.columns[2], x=list(data_plot_8['year_month_day']), 
-                                        y=list(data_plot_8.iloc[0:,2]),marker_color=colors_pal[1])
+                                        y=list(data_plot_8.iloc[0:,2]),marker_color="#3e53a0")
     ])
 
     # Change the bar mode
@@ -752,7 +753,7 @@ SIDEBAR_STYLE = {
     "bottom": 0,
     "width": "20rem",
     "padding": "2rem 1rem",
-    "background-color": "#e9e5cd", #ffe7a6
+    "background-color": "#03256c", #e9e5cd
 }
 
 # the styles for the main content position it to the right of the sidebar and
@@ -771,8 +772,9 @@ sidebar = html.Div(
         html.P(
             "Let's navigate together in this incredible visualization!", className="lead",
             style={'textAlign': 'center',
-                            'color': '#000000',
-                            'fontSize': 16}
+                            'color': '#ffffff',
+                            'fontSize': 15,
+                            'font-weight':'bold'}
         ),
         dbc.Nav(
             [
@@ -830,11 +832,20 @@ sidebar = html.Div(
                                                                       'borderRadius': '5px',
                                                                       'margin': '3px',
                                                                       'font-weight':'bold',
-                                                                      "background-color": "#5aacae"})
+                                                                      "background-color": "#00abaa"}) #00dc91 #f6b53d
             ],
             vertical=True,
             pills=True,
         ),
+         html.Img(src=app.get_asset_url('2.team_name_small.PNG'),
+            id = 'heat-image',
+            style={
+            'height': '60px',
+            'width': '180px',
+            'marginTop': '10px'
+           # 'margin-bottom': '25px'
+            }
+                 )
     ],
     style=SIDEBAR_STYLE,
 )
@@ -887,34 +898,46 @@ page_intro = html.Div([
 
     ], id = 'header', className='row flex-display', style={'margin-bottom': '25px'}),
     html.Div([
-    html.H1('Foreign Interference?'),
+    html.H1(children='Foreign Interference?',
+            style={
+                   'color': '#03256c',  # Change the color to blue
+                   'fontFamily': 'Arial, sans-serif',  # Change the font to Arial or a sans-serif fallback
+                   'font-weight':'bold'}),
     html.Div([
-        html.P('As an advanced economy and open democracy, Canada is a target of foreign interference.'),
-        html.P('Foreign interference includes harmful activities undertaken by foreign states, or those acting on its \
-                behalf, that are clandestine, deceptive, or involve a threat to any person to advance the strategic \
-                objectives of those states to the detriment of Canada’s national interests.', style={'text-align': 'justify'}), 
-        html.P('Foreign interference poses one of the greatest strategic threats to Canada’s national security. Examples \
-                include:'),
-        html.Ul([
-        html.Li("Threats, harassment or intimidation by foreign states, or those acting on its behalf, against anyone in \
-                 Canada, Canadian communities, or their loved ones abroad; and,"),
-        html.Li("Targeting officials at all levels of government to influence public policy and decision-making in a way \
-                 that is clandestine, deceptive or threatening."),
-    ])
-        #html.P("https://www.publicsafety.gc.ca/cnt/ntnl-scrt/frgn-ntrfrnc/index-en.aspx")
+        dcc.Markdown("Canada, being an advanced economy and open democracy, is susceptible to foreign interference. \
+        This interference encompasses **activities conducted by foreign states** or their agents that are **covert, \
+        deceptive, or involve a risk** to individuals, all aimed at advancing the strategic objectives of those \
+        states at the expense of Canada's national interests.", style={'text-align': 'justify'}), 
+        dcc.Markdown("Foreign interference represents a significant strategic threat to **Canada's national security**. \
+                Instances of such interference include:"),
+        dcc.Markdown('''
+    - **Threats, harassment, or intimidation** by foreign states or their proxies directed at individuals \
+                 within Canada, Canadian communities, or their family members residing abroad.
+    - Covert, deceptive, or threatening efforts to **influence public policy and decision-making** by \
+                 targeting officials at various levels of the government.
+    '''),
     ]),
-    html.H2('Why do states undertake foreign interference?'),
-    html.Ul([
-        html.Li("To undermine the integrity of democratic institutions, and covertly influence the outcomes of elections;"),
-        html.Li("To sway government decision-making and policies to advance their interests, to sow distrust in society and \
-                 to discredit those who threaten their interests;"),
-        html.Li("To limit freedom of speech on Canadian soil by intimidating those who have come to Canada;"),
-        html.Li("To obtain Canadian-made knowledge and innovation to support and advance their own military or economic objectives;"),
-        html.Li("To undermine the legitimacy of Canada’s representatives abroad, or the goals of our international activities; and"),
-        html.Li("To insert themselves into our supply chains and critical infrastructure."),
-    ]),
+    html.H2(children='What motivates states to engage in foreign interference?',
+            style={
+                   'color': '#03256c',  # Change the color to blue
+                   'fontFamily': 'Arial, sans-serif',  # Change the font to Arial or a sans-serif fallback
+                   'font-weight':'bold'}),
+    dcc.Markdown('''
+    - **Undermining** the credibility of **democratic institutions** and clandestinely manipulating election results.
+    - **Influencing government decisions and policies** in order to promote their own interests, instigate \
+                 societal distrust, and discredit those challenging their interests.
+    - **Suppressing freedom of speech** within Canada by intimidating individuals who have migrated to the country.
+    - Acquiring Canadian-generated knowledge and innovation to **bolster** their **military or economic agendas**.
+    - **Diminishing** the **legitimacy of Canada's** representatives abroad and thwarting the objectives of international \
+                endeavors.
+    - **Infiltrating** Canadian supply chains and **critical infrastructure**.
+    '''),
     html.Div([
-    html.H3("References"),
+    html.H3(children="References",
+            style={
+                   'color': '#03256c',  # Change the color to blue
+                   'fontFamily': 'Arial, sans-serif',  # Change the font to Arial or a sans-serif fallback
+                   'font-weight':'bold'}),
     dcc.Markdown("""
     Here are some references:
 
@@ -927,7 +950,11 @@ page_intro = html.Div([
 #### Page 1 (What)
 
 page1_what = html.Div([
-    html.H1("What tweets could be considered as foreign interference? And what couldn't?"),
+    html.H1(children="What tweets could be considered as foreign interference? And what couldn't?",
+            style={
+                   'color': '#03256c',  # Change the color to blue
+                   'fontFamily': 'Arial, sans-serif',  # Change the font to Arial or a sans-serif fallback
+                   'font-weight':'bold'}),
     html.Div([
         dcc.Markdown(
         'Using the scrapped tweets and employing the Vader **Sentiment Analysis** technique, we categorized tweets \
@@ -939,19 +966,32 @@ page1_what = html.Div([
     ]),
     html.Div([dcc.Graph(id = 'donut_charttweet_what', figure=fig_donutcharttweet_what, config={'displayModeBar': 'hover'}),
               ], className="grid-item"),
-     html.H1("What state media outlets or actors could be considered as foreign interference? And what couldn't?"),
+     html.H1(children="What state media outlets or actors could be considered as foreign interference? And what couldn't?",
+            style={
+                   'color': '#03256c',  # Change the color to blue
+                   'fontFamily': 'Arial, sans-serif',  # Change the font to Arial or a sans-serif fallback
+                   'font-weight':'bold'}),
     html.Div([
         dcc.Markdown(
-        '.',
+        'To determine if a state actor can be considered as foreign interference, we used the generated proxy from \
+         the tweets and counted the number of tweets flagged and not flagged as foreign interference. If the **count** of \
+         **tweets marked** as foreign interference **exceeds** the count of those **NOT flagged** as foreign interference, \
+         then the state actor is identified as engaging in foreign interference. This process led to the identification \
+         of **47 potential actors**, as shown in the following chart.',
         style={'text-align': 'justify'}),
     ]),
     html.Div([dcc.Graph(id = 'donut_chartactor_what', figure=fig_donutchartactor_what, config={'displayModeBar': 'hover'}),
               ], className="grid-item"),
-    html.H1("What platforms to be the focus on?"),
+    html.H1(children="What platforms to be the focus on?",
+            style={
+                   'color': '#03256c',  # Change the color to blue
+                   'fontFamily': 'Arial, sans-serif',  # Change the font to Arial or a sans-serif fallback
+                   'font-weight':'bold'}),
     html.Div([
         dcc.Markdown(
-        'The following plot shows the rate of Foreign Interference per platform. Given that **XX** has the \
-        **highest rate**, the **focus** should be on that platform.',
+        'The following plot illustrates the rate of Foreign Interference per platform. Given that **YouTube** has \
+         the **highest rate**, attention should be focused on that platform. Conversely, TikTok should not be \
+         considered since its rate is the smallest.',
         style={'text-align': 'justify'}),
     ]),
     html.Div([dcc.Graph(id = 'bar_chart_what', figure=fig_barchart_what, config={'displayModeBar': 'hover'}),
@@ -961,26 +1001,29 @@ page1_what = html.Div([
 #### Page 2 (Who)
 
 page2_who = html.Div([
-    html.H1("Who is a state foreign interfering actor? Who isn’t?"),
+    html.H1(children="Who are the most influential state media actors based on the overall social media followers?",
+            style={
+                   'color': '#03256c',  # Change the color to blue
+                   'fontFamily': 'Arial, sans-serif',  # Change the font to Arial or a sans-serif fallback
+                   'font-weight':'bold'}),
     html.Div([
         dcc.Markdown(
-        '.',
-        style={'text-align': 'justify'}),
-    ]),
-    #html.Div([dcc.Graph(id = 'donut_chart_who', figure=fig_donutchart_who, config={'displayModeBar': 'hover'}),
-    #          ], className="grid-item"),
-    html.H1("Who are the most influential state media actors based on the overall social media followers?"),
-    html.Div([
-        dcc.Markdown(
-        '.',
+        "Among the **top 10** most influential state media outlets, **CGTN**, China Daily, Xinhua News, People's Daily, \
+         and Global Times stand out as the actors with the **highest** number of **followers**, on average.",
         style={'text-align': 'justify'}),
     ]),
     html.Div([dcc.Graph(id = 'bar_chart_who', figure=fig_barchart_who, config={'displayModeBar': 'hover'}),
               ], className="grid-item"),
-    html.H1("Who are the key individuals mentioned in the tweets related to foreign interference?"),
+    html.H1(children="Who are the key individuals mentioned in the tweets related to foreign interference?",
+            style={
+                   'color': '#03256c',  # Change the color to blue
+                   'fontFamily': 'Arial, sans-serif',  # Change the font to Arial or a sans-serif fallback
+                   'font-weight':'bold'}),
     html.Div([
         dcc.Markdown(
-        '.',
+        "The individuals that appear the most in the tweets using our proxy method for foreign interference remark \
+         Joe Biden (**USA president**), Xi Jinping (**China's president**), Wang Yi (Minister of **Foreign Affairs** \
+         of the People's Republic of China), and David Haubert (USA **politician**).",
         style={'text-align': 'justify'}),
     ]),
     html.Div([html.Img(src="data:image/png;base64," + fig_wordcloud_who),
@@ -990,18 +1033,30 @@ page2_who = html.Div([
 #### Page 3 (When)
 
 page3_when = html.Div([
-    html.H1("When are the peak days for tweeting about foreign interference?"),
+    html.H1(children="When are the peak days for tweeting about foreign interference?",
+            style={
+                   'color': '#03256c',  # Change the color to blue
+                   'fontFamily': 'Arial, sans-serif',  # Change the font to Arial or a sans-serif fallback
+                   'font-weight':'bold'}),
     html.Div([
         dcc.Markdown(
-        '.',
+        'As shown in the following line chart, the foreign interference-related tweets usually occur on a \
+         **high proportion** (compared to NOT foreign interference) during **Mondays**. Nevertheless, the distribution \
+         is not drastically different between both lines.',
         style={'text-align': 'justify'}),
     ]),
     html.Div([dcc.Graph(id = 'plot_scatterdays_when', figure=fig_scatterdays_when, config={'displayModeBar': 'hover'}),
               ], className="grid-item"),
-    html.H1("When are the peak hours for tweeting about foreign interference?"),
+    html.H1(children="When are the peak hours for tweeting about foreign interference?",
+            style={
+                   'color': '#03256c',  # Change the color to blue
+                   'fontFamily': 'Arial, sans-serif',  # Change the font to Arial or a sans-serif fallback
+                   'font-weight':'bold'}),
     html.Div([
         dcc.Markdown(
-        '.',
+        'The tweets of foreign interference actors occur more **often** from **10:00 to 15:00**, even in a higher \
+         proportion than the NOT foreign interference ones. That slot is crucial since plenty of people **check** \
+         their social networks around **lunch hour**, reaching a higher number of people.',
         style={'text-align': 'justify'}),
     ]),
     html.Div([dcc.Graph(id = 'plot_scatterhour_when', figure=fig_scatterhour_when, config={'displayModeBar': 'hover'}),
@@ -1011,10 +1066,16 @@ page3_when = html.Div([
 #### Page 4 (Where)
 
 page4_where = html.Div([
-    html.H1("Where are the most frequent geographic region focuses of the State media outlets or actors?"),
+    html.H1(children="Where are the most frequent geographic region focuses of the State media outlets or actors?",
+            style={
+                   'color': '#03256c',  # Change the color to blue
+                   'fontFamily': 'Arial, sans-serif',  # Change the font to Arial or a sans-serif fallback
+                   'font-weight':'bold'}),
     html.Div([
         dcc.Markdown(
-        '.',
+        'The most frequent focuses occur in **English-speaking** countries (USA, Canada, United Kingdom, Australia) \
+         with an average frequency of around **200 actors**. Many actors are also influenced by Asia** (China and \
+         Japan) and **French-speaking** countries (Belgium, France, Canada).',
         style={'text-align': 'justify'}),
     ]),
     html.Div([dcc.Graph(id = 'plot_map_where', figure=fig_map_where, config={'displayModeBar': 'hover'}),
@@ -1024,10 +1085,17 @@ page4_where = html.Div([
 #### Page 5 (Why)
 
 page5_why = html.Div([
-    html.H1("Why do certain regions become the focus of foreign interference activities?"),
+    html.H1(children="Why do certain regions become the focus of foreign interference activities?",
+            style={
+                   'color': '#03256c',  # Change the color to blue
+                   'fontFamily': 'Arial, sans-serif',  # Change the font to Arial or a sans-serif fallback
+                   'font-weight':'bold'}),
     html.Div([
         dcc.Markdown(
-        '.',
+        'Usually, countries that are active **promoters** of **democracy** and strong international \
+         **partnerships** are the focus of foreign interference. Moreover, places with **diverse communities**, \
+         world **leaders** in research, and diverse economies are also targeted. The previous includes countries \
+         such as **Canada** and the **USA**, which are part of the **Anglosphere**, highlighted in the following graph.',
         style={'text-align': 'justify'}),
     ]),
     html.Div([dcc.Graph(id = 'bar_chart_why', figure=fig_barchart_why, config={'displayModeBar': 'hover'}),
@@ -1037,10 +1105,16 @@ page5_why = html.Div([
 #### Page 6 (How)
 
 page6_how = html.Div([
-    html.H1("How influential are state media actors on different social media platforms?"),
+    html.H1(children="How influential are state media actors on different social media platforms?",
+            style={
+                   'color': '#03256c',  # Change the color to blue
+                   'fontFamily': 'Arial, sans-serif',  # Change the font to Arial or a sans-serif fallback
+                   'font-weight':'bold'}),
     html.Div([
         dcc.Markdown(
-        '.',
+        'From the media actors available, it is evident that **Facebook** is the platform with the highest average \
+         number of followers (3.2M), followed (by far) by **YouTube** (189K), demonstrating a vast potential of \
+         influence in the social networks.',
         style={'text-align': 'justify'}),
     ]),
     html.Div([dcc.Graph(id = 'bar_chart_how', figure=fig_barchart_how, config={'displayModeBar': 'hover'}),
@@ -1050,10 +1124,18 @@ page6_how = html.Div([
 #### Page 7 (How much)
 
 page7_howmuch = html.Div([
-    html.H1("How much has the distribution of the foreign interference changed over time?"),
+    html.H1(children="How much has the distribution of the foreign interference changed over time?",
+            style={
+                   'color': '#03256c',  # Change the color to blue
+                   'fontFamily': 'Arial, sans-serif',  # Change the font to Arial or a sans-serif fallback
+                   'font-weight':'bold'}),
     html.Div([
         dcc.Markdown(
-        '.',
+        'Although the foreign interference proxy distribution varies over time, there is **no clear tendency** \
+         from 2013 to 2023. The highest levels of foreign interference occurred in **2014, 2015, and 2016**. \
+         In those years, there were three main events: **Brexit**, the US presidential **elections** (well-known \
+         cases of **alleged** foreign interference), and the European **Migrant Crisis**. The mentioned events \
+         attracted **international attention** and **potential** interference efforts.',
         style={'text-align': 'justify'}),
     ]),
     html.Div([dcc.Graph(id = 'bar_chart_howmuch', figure=fig_barchart_howmuch, config={'displayModeBar': 'hover'}),
@@ -1076,15 +1158,24 @@ else:
     
 # List of colors
 colorscale=['orange','cyan',"purple",'red','green','blue','black','yellow',"grey"]
-hex_text_colors=['#ffffff','#000000','#ffffff','#000000','#ffffff','#ffffff','#ffffff','#000000','#ffffff']
+hex_text_colors=['#000000','#000000','#ffffff','#ffffff','#ffffff','#ffffff','#ffffff','#000000','#ffffff']
 text_bold = [True, True, True, True, True, True, True, True, True, True]
 text_size = ['16px', '16px', '16px', '16px', '16px', '16px', '16px', '16px', '16px']
 
 page8_model = html.Div([
-    html.H1("How do we explain difficult concepts to senior decision-makers?"),
+    html.H1(children="How do we explain difficult concepts to senior decision-makers?",
+            style={
+                   'color': '#03256c',  # Change the color to blue
+                   'fontFamily': 'Arial, sans-serif',  # Change the font to Arial or a sans-serif fallback
+                   'font-weight':'bold'}),
     html.Div([
         dcc.Markdown(
-        '.',
+        'Explaining relations among the actors is a difficult concept, even more so for senior decision-makers. \
+         To **simplify** that concept, we employed the number of **followers** of each platform, the number of \
+         **views, reposts, replies, likes**, and **bookmarks** of tweets, and the **proxy** of foreign interference \
+         to establish transparent relationships among the actors. Using the **cosine similitude** and the \
+         **Girvan-Newman community** detection, we created a **graph network** showing the relation of the actors. \
+         **Nine communities** were found significant, represented in the following 3D interactive diagram (by each color):',
         style={'text-align': 'justify'}),
     ]),
     #html.Div([dcc.Graph(id = 'graph_network_similarity', figure=fig_network_similarity, config={'displayModeBar': 'hover'}),
@@ -1094,10 +1185,19 @@ page8_model = html.Div([
                           width='100%', height='1050px'),], 
              #className="grid-item"
             ),
-    html.H1("Who is a state foreign interfering actor? Who isn’t?"),
+    html.H1(children="Who is a state foreign interfering actor? Who isn’t?",
+            style={
+                   'color': '#03256c',  # Change the color to blue
+                   'fontFamily': 'Arial, sans-serif',  # Change the font to Arial or a sans-serif fallback
+                   'font-weight':'bold'}),
     html.Div([
         dcc.Markdown(
-        '.',
+        'To understand the nature of each community, we employed a simple **characterization** by calculating \
+         **aggregated measures** over the groups presented in the table below. Notice that the **orange** and \
+         **cyan** clusters have a foreign interference (FI) **rate of 1**, meaning that those two clusters are \
+         **potential** identifiers of foreign interference. Also, the purple and red communities contain foreign \
+         interference but at a **lower** rate. **CGTN** (America and Europe) and **Li Jingjing** belong to the \
+         orange and cyan groups, considering them state foreign actors.',
         style={'text-align': 'justify'}),
     ]),
     html.Div([dash_table.DataTable(characterizing_clust.to_dict('records'), 
@@ -1171,4 +1271,4 @@ def render_page_content(pathname):
 
 if __name__ == '__main__':
     app.run(debug=False, port=(os.getenv("PORT", "1010")))
-    
+

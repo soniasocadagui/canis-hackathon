@@ -233,16 +233,16 @@
     border-color: #1EAEDB; }
   
 .nav-pills a {
-    color: #000
+    color: #fff
 }
 
 .nav-pills a:hover {
-    color: #d64141;
+    color: #95cfd8;
 }
 
 .nav-pills .nav-link.active {
     color: #fff;
-    background-color: orange;
+    background-color: #95cfd8;
 }
 
   
