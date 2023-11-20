@@ -512,7 +512,7 @@ def barchart_how(df_competence_fi):
         # legend=dict(title="Methods",yanchor="top",y=1.0,xanchor="right",x=1),
         plot_bgcolor=colors_pal[7],
         paper_bgcolor=colors_pal[7],
-        xaxis_title="Region of focus", yaxis_title="# of Followers"
+        xaxis_title="Platforms", yaxis_title="# of Followers"
     )
 
     return fig
@@ -539,7 +539,7 @@ def barchart_howmuch(data_plot_8):
         width=600,
         height=400,
         font_size=16,
-        legend=dict(title="Methods"),
+        legend=dict(title="Is Foreign Interference?"),
         plot_bgcolor=colors_pal[7],
         paper_bgcolor=colors_pal[7],
         xaxis_title="Year", yaxis_title="Participation"
@@ -996,8 +996,8 @@ page1_what = html.Div([
         'Using the scrapped tweets and employing the Vader **Sentiment Analysis** technique, we categorized tweets \
          with Positive or Negative sentiment. Furthermore, using **Named Entity Recognition (NER)**, we identified \
          cities and places mentioned in each tweet. Ultimately, we established a proxy to determine what **tweets** \
-         are **Foreign Interference** by flagging those with a Negative sentiment and mentions of Canada (or any city \
-         from there). The following pie chart shows the percentage of Foreign Interference estimated.',
+         are **Foreign Interference**by flagging those with a Negative sentiment and mentions of the US and Canada \
+         (or any city from there). The following pie chart shows the percentage of Foreign Interference estimated.',
         style={'text-align': 'justify'}),
     ]),
     html.Div([dcc.Graph(id = 'donut_charttweet_what', figure=fig_donutcharttweet_what, config={'displayModeBar': 'hover'}),
@@ -1110,8 +1110,8 @@ page4_where = html.Div([
     html.Div([
         dcc.Markdown(
         'The most frequent focuses occur in **English-speaking** countries (USA, Canada, United Kingdom, Australia) \
-         with an average frequency of around **200 actors**. Many actors are also influenced by Asia (China and \
-         Japan) and **French-speaking** countries (Belgium, France, Canada).',
+         with an average frequency of around **200 actors**. Moreover, focus regions such as **Asia** (China and \
+         Japan) and **French-speaking** countries (Belgium, France, Canada) have a considerable frequence.',
         style={'text-align': 'justify'}),
     ]),
     html.Div([dcc.Graph(id = 'plot_map_where', figure=fig_map_where, config={'displayModeBar': 'hover'}),
